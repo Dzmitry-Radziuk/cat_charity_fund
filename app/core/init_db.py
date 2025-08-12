@@ -1,4 +1,5 @@
 import contextlib
+from typing import AsyncGenerator
 
 from fastapi_users.exceptions import UserAlreadyExists
 from pydantic import EmailStr
@@ -9,14 +10,20 @@ from app.core.user import get_user_db, get_user_manager
 from app.schemas.user import UserCreate
 
 
-get_async_session_context = contextlib.asynccontextmanager(get_async_session)
-get_user_db_context = contextlib.asynccontextmanager(get_user_db)
-get_user_manager_context = contextlib.asynccontextmanager(get_user_manager)
+get_async_session_context: contextlib.AbstractAsyncContextManager[
+    AsyncGenerator
+] = contextlib.asynccontextmanager(get_async_session)
+get_user_db_context: contextlib.AbstractAsyncContextManager[AsyncGenerator] = (
+    contextlib.asynccontextmanager(get_user_db)
+)
+get_user_manager_context: contextlib.AbstractAsyncContextManager[
+    AsyncGenerator
+] = contextlib.asynccontextmanager(get_user_manager)
 
 
 async def create_user(
     email: EmailStr, password: str, is_superuser: bool = False
-):
+) -> None:
     """Создать пользователя с указанными email и паролем."""
     try:
         async with get_async_session_context() as session:
@@ -33,7 +40,7 @@ async def create_user(
         pass
 
 
-async def create_first_superuser():
+async def create_first_superuser() -> None:
     """Создать первого суперпользователя, если указаны данные в настройках."""
     if (
         settings.first_superuser_email is not None and

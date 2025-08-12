@@ -1,4 +1,5 @@
 from datetime import datetime, timezone
+from typing import Any, Optional
 
 from sqlalchemy import Boolean, CheckConstraint, Column, DateTime, Integer
 
@@ -11,15 +12,17 @@ class AbstractBase(Base):
 
     __abstract__ = True
 
-    full_amount = Column(Integer, nullable=False)
-    invested_amount = Column(Integer, nullable=False, default=constants.ZERO)
-    fully_invested = Column(Boolean, default=False, nullable=False)
-    create_date = Column(
+    full_amount: int = Column(Integer, nullable=False)
+    invested_amount: int = Column(
+        Integer, nullable=False, default=constants.ZERO
+    )
+    fully_invested: bool = Column(Boolean, default=False, nullable=False)
+    create_date: datetime = Column(
         DateTime(timezone=True),
         default=lambda: datetime.now(timezone.utc),
         nullable=False,
     )
-    close_date = Column(DateTime, nullable=True)
+    close_date: Optional[datetime] = Column(DateTime, nullable=True)
 
     __table_args__ = (
         CheckConstraint("full_amount > 0", name="check_full_amount_positive"),
@@ -30,3 +33,8 @@ class AbstractBase(Base):
             "invested_amount <= full_amount", name="check_invested_le_full"
         ),
     )
+
+    def __init__(self, **kwargs: Any) -> None:
+        if "invested_amount" not in kwargs:
+            kwargs["invested_amount"] = constants.ZERO
+        super().__init__(**kwargs)

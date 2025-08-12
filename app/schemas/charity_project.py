@@ -1,3 +1,5 @@
+from typing import Any, Dict
+
 from pydantic import Field, PositiveInt, root_validator
 
 from app import constants
@@ -18,7 +20,7 @@ class CharityProjectUpdate(CharityProjectBase):
     """Схема для обновления проекта с проверкой на пустые строки."""
 
     @root_validator
-    def check_no_empty_strings(cls, values):
+    def check_no_empty_strings(cls, values: Dict[str, Any]) -> Dict[str, Any]:
         for field_name in ["name", "description"]:
             value = values.get(field_name)
             if value is not None and not value.strip():
