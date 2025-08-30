@@ -245,7 +245,7 @@ pytest
 
 ## 🧑‍💻 Автор
 
-- Дмиитрий Радюк 
+- Дмитрий Радюк 
 - GitHub: https://github.com/Dzmitry-Radziuk
 - Email: mitia.radiuk@yandex.ru
 ---
